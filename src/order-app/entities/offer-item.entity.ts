@@ -31,7 +31,7 @@ export class Vehicle {
   routesActive: boolean;
   @Column({nullable: true})
   onSale :  boolean;
-  @ManyToOne(() => User, (provider: User) => provider.OfferItems)
+  @ManyToOne(() => User, (provider: User) => provider.offerItems)
   provider: User;
   // @OneToOne(() => VehicleDriver, (provider: VehicleDriver) => provider.vehicle)
   // driver: VehicleDriver;
@@ -94,7 +94,7 @@ export class OfferItem {
   commodityWeight: string;
   @Column({nullable: true})
   minimumPrice : string;
-  @ManyToOne(() => User, (provider: User) => provider.OfferItems)
+  @ManyToOne(() => User, (provider: User) => provider.offerItems)
   provider: User;
   @OneToMany(() => Order, (order: Order) => order.offerItem)
   orders: Order[];
@@ -123,8 +123,6 @@ export class OfferItemImage {
   @ManyToOne(() => Vehicle, (vehicle: Vehicle) => vehicle.images)
   public vehicle: Vehicle;
 }
-
-
 
 @Entity()
 export class VehicleImage {

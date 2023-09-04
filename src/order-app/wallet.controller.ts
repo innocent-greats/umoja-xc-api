@@ -1,6 +1,5 @@
 import { Controller, Post, Body } from '@nestjs/common';
-import { OrderService } from './order.service';
-import { OfferItemDTO } from './dto/offer-item.dto';
+
 import { WalletService } from './wallet.service';
 import { TransferToWalletDTO, WalletRegistrationRequest } from 'src/users/dto/wallet-create.dto';
 

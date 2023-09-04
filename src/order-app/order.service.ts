@@ -1,13 +1,11 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import {  Injectable,  } from '@nestjs/common';
 
 import { TextDecoder } from 'util';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Order, TransportOrder, WarehouseReceipt } from './entities/order.entity';
-import { OfferItemDTO } from './dto/offer-item.dto';
-import { OfferItem, OfferItemImage, VehicleDriver } from './entities/offer-item.entity';
+import { VehicleDriver } from './entities/offer-item.entity';
 import { UsersService } from 'src/users/users.service';
-import { User } from 'src/users/entities/user.entity';
 import { PlaceOrderSocketDTO } from 'src/users/dto/create-user.input';
 import OfferItemsService from './offer-item.service';
 import { WarehouseReceiptDTO } from './dto/order.dto';

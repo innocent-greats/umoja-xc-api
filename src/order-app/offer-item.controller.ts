@@ -2,15 +2,14 @@ import {
     Controller,
     Get,
     UseInterceptors,
-    ClassSerializerInterceptor, Query, Body, Post, Req, UploadedFile, UploadedFiles, Param, Res,
+    ClassSerializerInterceptor, Body, Post, Req, UploadedFiles, Param, Res,
   } from '@nestjs/common';
-import OfferItemsSearchService from 'src/search/search.service';
 import OfferItemsService from './offer-item.service';
-import { OfferItemDTO, OfferItemRequestDTO } from './dto/offer-item.dto';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import {  OfferItemRequestDTO } from './dto/offer-item.dto';
+import {  FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
-import RequestWithUser, { RequestWithOfferItem } from 'src/users/dto/requestWithUser.interface';
+import  { RequestWithOfferItem } from 'src/users/dto/requestWithUser.interface';
 
    
   @Controller('offer-items')
@@ -40,7 +39,7 @@ import RequestWithUser, { RequestWithOfferItem } from 'src/users/dto/requestWith
     }))
     async createNewOfferItem(@Req() request: RequestWithOfferItem, @UploadedFiles() files:  Array<Express.Multer.File>) {
         console.log('addOfferItemImages offerItem request',request.body['offer-item']) 
-        const req:OfferItemRequestDTO = JSON.parse(request.body['offer-item'])
+        const req = JSON.parse(request.body['offer-item'])
         console.log('addOfferItemImages offerItem',req) 
         return this.offerItemsService.createNewOfferItem(req, files);
     }
@@ -56,6 +55,17 @@ import RequestWithUser, { RequestWithOfferItem } from 'src/users/dto/requestWith
     return this.offerItemsService.getAccountOfferItems(vendor.vendorID);
     }  
 
+    @Post('get-marketplace-offer-items')
+    getMarketplaceOfferItems(@Body() vendor: any) {
+      console.log('get-marketplace-offer-items') 
+    return this.offerItemsService.getMarketplaceOfferItems(vendor.vendorID);
+    } 
+
+    @Post('get-marketplace-providers')
+    getMarketplaceProviders(@Body() vendor: any) {
+      console.log('get-marketplace-providers') 
+    return this.offerItemsService.findProvidersForMarketplaceCustomer('customer');
+    } 
     @Post('get-offer-items')
     async getOfferItems(@Body() category: string) {
       return this.offerItemsService.getOfferItemsNamesByCategory(category);
@@ -65,6 +75,8 @@ import RequestWithUser, { RequestWithOfferItem } from 'src/users/dto/requestWith
     async searchForOfferItems(@Body() search: string) {
       return this.offerItemsService.searchForOfferItems(search);
     }
+
+    
 
     @Post('get-trade-providers')
     async getTradeProviders(@Body() search: string) {

@@ -114,7 +114,7 @@ export class User {
   @JoinColumn()
   business: Business
   @OneToMany(() => OfferItem, (offerItem: OfferItem) => offerItem.provider)
-  OfferItems: OfferItem[];
+  offerItems: OfferItem[];
   @JoinColumn({ name: 'avatarId' })
   @OneToOne(() => LocalFile,{nullable: true})
   public avatar?: LocalFile;

@@ -24,13 +24,10 @@ export class ChatService {
     // console.log('getUserFromSocket socket.handshake.headers.cookie', socket.handshake.headers.cookie)
     // console.log('getUserFromSocket socket.handshake.query token', socket.handshake)
     let newUser;
-
     let token = socket.handshake.headers.cookie != null ? socket.handshake.headers.cookie : socket.handshake.query['token']
     if (token) {
       newUser = await this.usersService.decodeUserToken(token.toString());
-
     }
-    // console.log('authenticationService.decodeUserToken user', newUser)
     return newUser;
   }
 

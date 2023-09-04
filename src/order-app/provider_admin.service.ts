@@ -4,7 +4,6 @@ import { TextDecoder } from 'util';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Order, TransportOrder, WarehouseReceipt } from './entities/order.entity';
-import { OfferItemDTO } from './dto/offer-item.dto';
 import { OfferItem, OfferItemImage, Vehicle, VehicleDriver, VehicleImage, WarehouseReceiptImage } from './entities/offer-item.entity';
 import { UsersService } from 'src/users/users.service';
 import { Employee, User } from 'src/users/entities/user.entity';

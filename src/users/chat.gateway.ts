@@ -152,15 +152,18 @@ export class ChatGateway implements OnGatewayConnection {
     @ConnectedSocket() socket: Socket,
   ) {
     let sender: any;
-    console.log('@notifyOnlineStatus', messageDTO.content)
-    const user = await this.chatService.getUserFromSocket(socket);
-    sender = await this.socketRegisterUser(user, socket, messageDTO.content)
-
-    const data = {
-      socketID: sender.socketID,
-      data: sender,
+    console.log('@notifyOnlineStatus', messageDTO.senderID)
+    const user = await this.userService.findOneByUserID(messageDTO.senderID);
+    // console.log('user', user)
+    if(user){
+      sender = await this.socketRegisterUser(user, socket, messageDTO.content)
+      const data = {
+        socketID: sender.socketID,
+        data: sender,
+      }
+      this.server.sockets.to(sender.socketID).emit('update-online-status', JSON.stringify(data))
     }
-    this.server.sockets.to(sender.socketID).emit('update-online-status', JSON.stringify(data))
+
   }
   
 
@@ -212,12 +215,15 @@ export class ChatGateway implements OnGatewayConnection {
     @ConnectedSocket() socket: Socket,
   ) {
     const user = await this.chatService.getUserFromSocket(socket);
-    const account = await this.socketRegisterUser(user, socket, messageDTO.content)
-    const orders = await this.ordersService.findOrdersByCustomerOrVendorId(user.userID);
-    const data = {
-      "orders": JSON.stringify(orders),
+    if(user){
+      const account = await this.socketRegisterUser(user, socket, messageDTO.content)
+      const orders = await this.ordersService.findOrdersByCustomerOrVendorId(user.userID);
+      const data = {
+        "orders": JSON.stringify(orders),
+      }
+      this.server.sockets.to(account.socketID).emit('receive-account_orders', JSON.stringify(data))
     }
-    this.server.sockets.to(account.socketID).emit('receive-account_orders', JSON.stringify(data))
+
   }
 
   @SubscribeMessage('get-account-offer-items')
@@ -247,14 +253,17 @@ export class ChatGateway implements OnGatewayConnection {
     @MessageBody() orderDTO: PlaceOrderSocketDTO,
     @ConnectedSocket() socket: Socket,
   ) {
+    console.log('orderDTO', orderDTO)
+    let ord = JSON.parse(orderDTO.order)
     let order = await this.ordersService.placeOrder(orderDTO)
-
     const data = {
       "order": JSON.stringify(order),
     }
-
-    const userConnection = await this.connectedUserRepository.findOne({ where: { userID: orderDTO.providerID, currentConnectionStatus: 'online' } })
+    
+    console.log(' orderDTO.providerID', ord.providerID)
+    const userConnection = await this.connectedUserRepository.findOne({ where: { userID:ord.providerID, currentConnectionStatus: 'online' } })
     if (userConnection) {
+      console.log('userConnection',userConnection)
       this.server.sockets.to(userConnection.socketID).emit('receive-order-request', JSON.stringify(data))
     }
     return order;

@@ -10,7 +10,6 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
-import { OfferItemDTO, OfferItemRequestDTO } from './dto/offer-item.dto';
 import { ProviderAdminService } from './provider_admin.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -23,7 +22,6 @@ import { UsersService } from 'src/users/users.service';
 @Controller('provider-admin')
 export class ProviderAdminController {
   constructor(
-    private readonly orderService: OrderService,
     private readonly providerAdminService: ProviderAdminService,
     private readonly usersService: UsersService,
   ) {}

@@ -76,20 +76,14 @@ export class UsersService {
         if (newUser) {
           console.log('registered newUser', newUser);
           await this.generateWalletAccount(newUser);
-          return newUser;
+          return this.findOneByUserID(newUser.userID);
         }
       } catch (error) {
         return null;
       }
     } catch (error) {
       console.log('error exists', error);
-      return {
-        status: 404,
-        data: '',
-        error: true,
-        errorMessage: 'User #00000 not found',
-        successMessage: null,
-      };
+      return null
     }
     return null;
   }
@@ -244,7 +238,7 @@ export class UsersService {
   // get all entity objects
   async findAll(): Promise<Array<User>> {
     return await this.userRepository.find({
-      relations: { wallet: true, OfferItems: true },
+      relations: { wallet: true, offerItems: true },
     });
   }
 
@@ -287,7 +281,7 @@ export class UsersService {
     if (decodedser) {
       user = await this.userRepository.findOne({
         where: { userID: decodedser.sub },
-        relations: { business: true, OfferItems: true, wallet: true },
+        relations: { business: true, offerItems: true, wallet: true },
       });
       console.log('getUserProfile');
       console.log(decodedser.sub);
@@ -308,9 +302,9 @@ export class UsersService {
       where: { userID: userID },
       relations: {
         business: true,
-        OfferItems: true,
+        offerItems: true,
         wallet: true,
-        warehouseReceipts: true,
+        orders: true,
       },
     });
     if (!user || user === null) {
@@ -325,7 +319,7 @@ export class UsersService {
       where: { phone: phone },
       relations: {
         business: true,
-        OfferItems: true,
+        offerItems: true,
         wallet: true,
         warehouseReceipts: true,
         orders: true,
@@ -345,7 +339,7 @@ export class UsersService {
       where: { email: email },
       relations: {
         business: true,
-        OfferItems: true,
+        offerItems: true,
         wallet: true,
         warehouseReceipts: true,
         orders: true,
@@ -419,15 +413,17 @@ export class UsersService {
   async onHandleSignUp(createUserDTO: CreateUserDTO) {
     try {
       const checkUser = await this.findOneByPhone(createUserDTO.phone);
-
       if (!checkUser) {
         console.log('adding new user');
         const req = await this.register(createUserDTO);
         if (req) {
-          // return this.authService.generateOTP(newUser.phone);
+          const user = await this.findOneByUserID(req.userID);
+          const token = await this.authService.generateUserCredentials(req)
+          user['token'] = token['access_token']
+          console.log('token', user);
           return {
             status: 200,
-            data: JSON.stringify(req),
+            data: JSON.stringify(user),
             error: null,
             errorMessage: null,
             successMessage: 'success',
